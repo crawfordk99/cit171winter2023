@@ -11,10 +11,6 @@ function setusername(){
 
 function setuserpassword(){
     password = $("#password").val();
-    var valid=passwordRegEx.exec(password);
-    if (!valid){
-        alert('Must be 6 digits, upper, lower, number, and symbol');
-    }
 }
 
 function setverifypassword(){
@@ -46,12 +42,11 @@ function checkexpiredtoken(token){
     }
 }
 
-function userlogin(){
-    setuserpassword();
-    setusername();
+function oneTimePassword(){
+    const phoneNumber=document.getElementById('username').value
     $.ajax({
         type: 'POST',
-        url: '/login',
+        url: 'https://dev.stedi.me/twofactorlogin/' + phoneNumber,
         data: JSON.stringify({userName, password}),
         success: function(data) {
             window.location.href = "/timer.html#"+data;//add the token to the url
@@ -60,6 +55,21 @@ function userlogin(){
         dataType: 'text'
     });
 
+}
+
+function userlogin(){
+    setuserpassword();
+    setusername();
+    $.ajax({
+        type: 'POST',
+        url: 'https://dev.stedi.me/twofactorlogin',
+        data: JSON.stringify({phoneNumber: userName, oneTimePassword: password}),
+        success: function(data) {
+            window.location.href = "/timer.html#"+data;//add the token to the url
+        },
+        contentType: "application/text",
+        dataType: 'text'
+    });
 }
 
 function readonlyforms(formid){
